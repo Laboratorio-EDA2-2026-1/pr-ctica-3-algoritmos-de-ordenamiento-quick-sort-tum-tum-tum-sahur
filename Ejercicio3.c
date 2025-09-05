@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 
 /*
   Ejercicio 3. El problema del papá tacaño.
@@ -117,9 +118,58 @@ int elegir_destino(const Destino *destinos, int n) {
 
     // 4) Hallar el índice con distancia mínima a la media
     //      - manejar empates de forma determinista (p. ej., menor índice)
+    int conocidos = 0, desconocidos = 0;
+    int suma_conocidos = 0;
+    int max_conocido = 0;
 
-    return -1; // Placeholder: reemplaza por el índice elegido
+    // 1) Contar conocidos y desconocidos
+    for (int i = 0; i < n; i++) {
+        if (destinos[i].es_conocido) {
+            conocidos++;
+            suma_conocidos += destinos[i].costo;
+            if (destinos[i].costo > max_conocido) {
+                max_conocido = destinos[i].costo;
+            }
+        } else {
+            desconocidos++;
+        }
+    }
+
+    // 2) Regla 5: mayoría de desconocidos
+    if (desconocidos > conocidos) {
+        int idxs[desconocidos], j = 0;
+        for (int i = 0; i < n; i++) {
+            if (!destinos[i].es_conocido) {
+                idxs[j++] = i;
+            }
+        }
+        int elegido = rand() % desconocidos;
+        return idxs[elegido];
+    }
+
+    // 3) Calcular la media con solo los conocidos
+    double media = (double)suma_conocidos / conocidos;
+
+    // 4) Asignar valor representativo a los desconocidos
+    //    → mayor que cualquier conocido (max_conocido + 1)
+    int valor_desconocido = max_conocido + 1;
+
+    // 5) Buscar el destino con costo más cercano a la media
+    int indice_elegido = -1;
+    double min_dif = 1e18;
+
+    for (int i = 0; i < n; i++) {
+        int valor = destinos[i].es_conocido ? destinos[i].costo : valor_desconocido;
+        double dif = fabs(valor - media);
+        if (dif < min_dif) {
+            min_dif = dif;
+            indice_elegido = i;
+        }
+    }
+
+    return indice_elegido;
 }
+
 
 int main(void) {
     int n;
