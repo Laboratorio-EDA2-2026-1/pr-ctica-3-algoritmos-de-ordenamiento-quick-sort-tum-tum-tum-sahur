@@ -30,7 +30,7 @@ int particion(int arr[], int bajo, int alto) {
   int pivote = arr[alto];
   int i = (bajo-1);
 
-  for (int j = low; j < alto; j++){
+  for (int j = bajo; j < alto; j++){
     if (arr[j] <= pivote){
       i++;
       intercambiar(&arr[i], &arr[j]);
@@ -48,9 +48,9 @@ int particion(int arr[], int bajo, int alto) {
 void quicksort(int arr[], int bajo, int alto) {
     // Escribe aquí tu función
   if(bajo < alto){
-    int pi = partition(arr,bajo,alto);
+    int pi = particion(arr,bajo,alto);
     quicksort(arr,bajo,pi-1);
-    quicksort(arr,i,alto);
+    quicksort(arr,pi,alto);
   }
 }
 
