@@ -17,7 +17,7 @@
     - quicksort_promedio(arr, bajo, alto) -> recursivo
 */
 
-static inline void intercambiar(int *a, int *b) {
+void intercambiar(int *a, int *b) {
     int t = *a; *a = *b; *b = t;
 }
 
@@ -27,7 +27,12 @@ double calcular_promedio_segmento(int arr[], int bajo, int alto) {
     // Pista:
     //   - Acumula en (long long) o (double) para evitar overflow
     //   - Devuelve suma / cantidad como double
-    return 0.0; // placeholder
+    double suma = 0;
+    for (int i = bajo; i <= alto; i++)
+        {
+            suma += arr[i];
+        }
+    return suma / (alto - bajo + 1); // placeholder
 }
 
 /*
@@ -43,11 +48,29 @@ double calcular_promedio_segmento(int arr[], int bajo, int alto) {
       por ejemplo, (< pivote) a la izquierda y (>= pivote) a la derecha.
     - Asegura progreso (evitar ciclos infinitos cuando todos son iguales).
 */
-int particion_por_promedio(int arr[], int bajo, int alto, double pivote) {
+int particion_por_promedio(int arr[], int bajo, int alto){ //double pivote) {
     // Escribe aquí tu función
     // Puedes implementar un esquema tipo Hoare o Lomuto pero guiado por pivot double.
     // Recuerda: NO escribas 'pivote' dentro del arreglo; solo compáralo contra arr[i].
-    return -1; // placeholder
+    double pivote = calcular_promedio_segmento(arr,bajo, alto);
+    int i = bajo - 1;
+    int j = alto + 1;
+    
+    while (1)
+    {
+        do {
+            i++;
+        }while (arr[i] < pivote);
+        do {
+            j--;
+        }while (arr[j] > pivote);
+    
+        if (i >= j) return j;
+    
+        intercambiar(&arr[i], &arr[j]);
+    }
+    //indice final del grupo < pivote
+    //return i; // placeholder
 }
 
 /*
@@ -60,6 +83,13 @@ int particion_por_promedio(int arr[], int bajo, int alto, double pivote) {
 */
 void quicksort_promedio(int arr[], int bajo, int alto) {
     // Escribe aquí tu función
+    if (bajo < alto){
+        int pi = particion_por_promedio(arr, bajo, alto);
+        quicksort_promedio(arr, bajo, pi);
+        quicksort_promedio(arr,pi+1,alto);
+    }
+    //quicksort_promedio(arr, bajo, k);
+    //quicksort_promedio(arr, k + 1, alto);
 }
 
 /* Utilidad para imprimir un arreglo */
@@ -103,18 +133,3 @@ int main(void) {
     free(arr);
     return 0;
 }
-
-/*
-Ejemplo de uso:
-Entrada:
-8
-5 2 9 2 7 10 3 6
-
-Salida esperada:
-2 2 3 5 6 7 9 10
-
-Notas de implementación:
-- La media puede ser no entera; compárala como double contra enteros.
-- Define claramente qué lado incluye los == pivote para asegurar terminación.
-- No insertes el pivote en el arreglo (restricción).
-*/
