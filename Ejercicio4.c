@@ -42,6 +42,67 @@
  * - No está permitido comparar tuerca vs tuerca ni tornillo vs tornillo.
  *
  */
+
+
+int partir_tuercas(int tuercas[], int bajo, int alto, int tornilloPivote) {
+    int i = bajo;
+    for (int j = bajo; j < alto; j++) {
+        if (tuercas[j] < tornilloPivote) {
+            int tmp = tuercas[i];
+            tuercas[i] = tuercas[j];
+            tuercas[j] = tmp;
+            i++;
+        } else if (tuercas[j] == tornilloPivote) {
+            // mover el igual al final
+            int tmp = tuercas[j];
+            tuercas[j] = tuercas[alto];
+            tuercas[alto] = tmp;
+            j--;
+        }
+    }
+    // colocar el igual en su lugar correcto
+    int tmp = tuercas[i];
+    tuercas[i] = tuercas[alto];
+    tuercas[alto] = tmp;
+    return i; // posición de la tuerca emparejada
+}
+
+/* Particionar tornillos usando una tuerca pivote */
+int partir_tornillos(int tornillos[], int bajo, int alto, int tuercaPivote) {
+    int i = bajo;
+    for (int j = bajo; j < alto; j++) {
+        if (tornillos[j] < tuercaPivote) {
+            int tmp = tornillos[i];
+            tornillos[i] = tornillos[j];
+            tornillos[j] = tmp;
+            i++;
+        } else if (tornillos[j] == tuercaPivote) {
+            int tmp = tornillos[j];
+            tornillos[j] = tornillos[alto];
+            tornillos[alto] = tmp;
+            j--;
+        }
+    }
+    int tmp = tornillos[i];
+    tornillos[i] = tornillos[alto];
+    tornillos[alto] = tmp;
+    return i; // posición del tornillo emparejado
+}
+
+/* Recursivo estilo quicksort */
+void emparejar_recursivo(int tuercas[], int tornillos[], int bajo, int alto) {
+    if (bajo < alto) {
+        // Usamos el último tornillo como pivote
+        int pivoteIndex = partir_tuercas(tuercas, bajo, alto, tornillos[alto]);
+        // Ahora usamos la tuerca encontrada como pivote
+        partir_tornillos(tornillos, bajo, alto, tuercas[pivoteIndex]);
+
+        // Recursemos a izquierda y derecha
+        emparejar_recursivo(tuercas, tornillos, bajo, pivoteIndex - 1);
+        emparejar_recursivo(tuercas, tornillos, pivoteIndex + 1, alto);
+    }
+}
+
 void emparejar_tuercas_y_tornillos(int tuercas[], int tornillos[], int n) {
     // Escribe aquí tu función
     //
@@ -53,7 +114,9 @@ void emparejar_tuercas_y_tornillos(int tuercas[], int tornillos[], int n) {
     //   partir_tornillos(tornillos, bajo, alto, tuercas[indicePivote]);
     //
     // Y luego hacer llamadas recursivas en los subarreglos.
+    emparejar_recursivo(tuercas, tornillos, 0, n - 1);
 }
+
 
 /* Imprime un arreglo lineal */
 void imprimir_arreglo(const char *etiqueta, int arr[], int n) {
@@ -80,6 +143,7 @@ int main(void) {
     }
 
     int n_tuercas = 0, n_tornillos = 0;
+    printf("Ingresa si es tuerca o tornillo (tuerca = 0, tornillo = 1) y su tamaño/valor.\n");
 
     for (int i = 0; i < m; i++) {
         int tipo, valor;
